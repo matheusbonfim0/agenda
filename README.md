@@ -7,4 +7,4 @@ Onde foi criado uma API Rest com o desenvolvimento de uma agenda pessoal para co
 # Conhecimentos Adquiridos
   - Python
   - Django
-  - Postgress
+  - SQlite3
