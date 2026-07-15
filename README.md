@@ -1,10 +1,23 @@
-# Projeto Agenda 
+# Agenda
 
-Projeto desenvolvido para estudo do framework Django pela plataforma DIO (Digital Innovation One)
+Aplicação Django para criar e gerenciar eventos privados por usuário.
 
-Onde foi criado uma API Rest com o desenvolvimento de uma agenda pessoal para controle de horários
+## Executar localmente
 
-# Conhecimentos Adquiridos
-  - Python
-  - Django
-  - SQlite3
+```bash
+python -m venv .venv
+python -m pip install -r requirements.txt
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+```
+
+Copie `.env.example` para o gerenciador de variáveis do seu ambiente. Em produção,
+defina uma chave secreta nova, mantenha `DJANGO_DEBUG=false` e configure os hosts permitidos.
+
+## Testes
+
+```bash
+python manage.py test
+python manage.py check --deploy
+```

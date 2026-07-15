@@ -1,10 +1,11 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from core.models import Evento
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from datetime import datetime, timedelta
-from django.http.response import Http404, JsonResponse
+from django.http.response import JsonResponse
+from django.views.decorators.http import require_POST
 # Create your views here.
 
 
@@ -44,10 +45,13 @@ def evento(request):
     id_evento = request.GET.get('id')
     dados = { }
     if id_evento:
-        dados['evento'] = Evento.objects.get(id=id_evento)
+        dados['evento'] = get_object_or_404(
+            Evento, id=id_evento, usuario=request.user
+        )
     return render(request, 'evento.html', dados)
 
 @login_required(login_url='/login/')
+@require_POST
 def submit_evento(request):
     if request.POST:
         titulo = request.POST.get('titulo')
@@ -56,9 +60,13 @@ def submit_evento(request):
         usuario = request.user
         id_evento = request.POST.get('id_evento')
         if id_evento:
-            Evento.objects.filter(id=id_evento).update(titulo=titulo,
-                                                       data_evento=data_evento,
-                                                       descricao=descricao)
+            evento_existente = get_object_or_404(
+                Evento, id=id_evento, usuario=usuario
+            )
+            evento_existente.titulo = titulo
+            evento_existente.data_evento = data_evento
+            evento_existente.descricao = descricao
+            evento_existente.save()
         else:
             Evento.objects.create(titulo=titulo,
                                   data_evento=data_evento,
@@ -67,16 +75,10 @@ def submit_evento(request):
     return redirect('/')
 
 @login_required(login_url='/login/')
+@require_POST
 def delete_evento(request, id_evento):
-    usuario = request.user
-    try:
-        evento = Evento.objects.get(id=id_evento)
-    except Exception:
-        raise Http404()
-    if usuario == evento.usuario:
-        evento.delete()
-    else:
-        raise Http404()
+    evento = get_object_or_404(Evento, id=id_evento, usuario=request.user)
+    evento.delete()
     return redirect('/')
 
 @login_required(login_url='/login/')
