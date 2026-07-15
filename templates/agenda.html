@@ -15,7 +15,10 @@
                                 {% endif %}>
                         {{ evento.titulo }} - {{ evento.get_data_evento}}
                         ( <a href="evento/?id={{ evento.id }}"> Editar </a>
-                        / <a href="evento/delete/{{ evento.id }}"> Excluir </a>)
+                        / <form method="post" action="evento/delete/{{ evento.id }}" style="display:inline">
+                            {% csrf_token %}
+                            <button type="submit">Excluir</button>
+                          </form>)
                     </div>
                 </li>
           {% endfor %}
